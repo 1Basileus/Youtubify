@@ -47,7 +47,7 @@ def get_authenticated_service():
             http=credentials.authorize(httplib2.Http()))
 
 def add_video_to_playlist(youtube,videoID,playlistID):
-      youtube.playlistItem().insert(
+      youtube.playlistItems().insert(
       part="snippet",
       body={
             'snippet': {
@@ -64,8 +64,9 @@ def search_video(youtube,artist,song):
     search_string = artist + ' ' + song
     videosSearch = VideosSearch(search_string, limit = 10)
     try:
-        print(videosSearch.result()['result'][0])
-        return 
+        result = videosSearch.result()['result'][0]
+        print(result)
+        return result['id']
     except:
         print('Song not found on Youtube: ', search_string)
         return ""
@@ -76,7 +77,7 @@ if __name__ == "__main__":
     client_id = data['client_id']
     client_secret = data['client_secret']
     playlistId = input('Enter the Spotify Playlist Id: ')
-    yt_playlistId = input('Enter the Youtube Playlist Id: ')
+    yt_playlist_id = input('Enter the Youtube Playlist Id: ')
     print('')
 
     scope = "playlist-read-collaborative"
@@ -89,11 +90,12 @@ if __name__ == "__main__":
     for idx, item in enumerate(results['items']):
         track = item['track']
         print(idx, track['artists'][0]['name'], " – ", track['name'])
-
+    print('')
     print('Starting...')
     for idx, item in enumerate(results['items']):
         track = item['track']
         artist = track['artists'][0]['name']
         song = track['name']
         print('Searching Song on Youtube: ', artist, " ", song)
-        video = search_video(youtube,artist,song)
+        video_id = search_video(youtube,artist,song)
+        add_video_to_playlist(youtube,video_id,yt_playlist_id)
