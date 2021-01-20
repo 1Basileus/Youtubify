@@ -98,4 +98,6 @@ if __name__ == "__main__":
         song = track['name']
         print('Searching Song on Youtube: ', artist, " ", song)
         video_id = search_video(youtube,artist,song)
+        if(video_id == ""):
+            continue
         add_video_to_playlist(youtube,video_id,yt_playlist_id)
